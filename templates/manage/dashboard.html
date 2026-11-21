@@ -1,0 +1,40 @@
+{% extends "manage/base.html" %}
+{% block title %}Admin - FindIt{% endblock %}
+{% block manage %}
+<h1 class="h3 mb-3">Admin overview</h1>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3"><div class="stat panel"><div class="num">{{ stats.users }}</div><div class="lbl">Users</div></div></div>
+  <div class="col-6 col-md-3"><div class="stat panel"><div class="num">{{ stats.lost }}</div><div class="lbl">Lost reports</div></div></div>
+  <div class="col-6 col-md-3"><div class="stat panel"><div class="num">{{ stats.found }}</div><div class="lbl">Found reports</div></div></div>
+  <div class="col-6 col-md-3"><div class="stat panel"><div class="num text-success">{{ stats.rate }}%</div><div class="lbl">Recovery rate ({{ stats.recovered }} items)</div></div></div>
+  <div class="col-6 col-md-4"><a class="text-decoration-none" href="{% url 'manage_reports' %}?approval=pending"><div class="stat panel"><div class="num">{{ stats.pending_reports }}</div><div class="lbl">Reports awaiting approval</div></div></a></div>
+  <div class="col-6 col-md-4"><a class="text-decoration-none" href="{% url 'manage_claims' %}"><div class="stat panel"><div class="num">{{ stats.pending_claims }}</div><div class="lbl">Claims to verify</div></div></a></div>
+  <div class="col-12 col-md-4"><div class="stat panel"><div class="num">{{ stats.matches }}</div><div class="lbl">Smart matches found</div></div></div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-7"><div class="panel"><h2>Reports in the last 7 days</h2><canvas id="daysChart" height="140"></canvas></div></div>
+  <div class="col-lg-5"><div class="panel"><h2>Status breakdown</h2><canvas id="statusChart" height="200"></canvas></div></div>
+  <div class="col-lg-7"><div class="panel"><h2>Reports by category</h2><canvas id="catChart" height="140"></canvas></div></div>
+  <div class="col-lg-5"><div class="panel"><h2>Claims waiting</h2>
+    {% for c in recent_claims %}<div class="border-top py-2"><a href="{% url 'manage_claim_detail' c.pk %}">{{ c.found_item.item_name }}</a> <span class="text-muted">by {{ c.user.username }}</span></div>
+    {% empty %}<p class="text-muted mb-0">No claims waiting.</p>{% endfor %}</div></div>
+</div>
+{{ chart|json_script:"chart-data" }}
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+  const d = JSON.parse(document.getElementById("chart-data").textContent);
+  const blue = "#2563EB", amber = "#F59E0B", green = "#16A34A", grey = "#94A3B8";
+  new Chart(document.getElementById("daysChart"), { type: "bar",
+    data: { labels: d.days.labels, datasets: [
+      { label: "Lost", data: d.days.lost, backgroundColor: amber },
+      { label: "Found", data: d.days.found, backgroundColor: green }] },
+    options: { scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } } });
+  new Chart(document.getElementById("statusChart"), { type: "doughnut",
+    data: { labels: d.status.labels, datasets: [{ data: d.status.values, backgroundColor: [grey, amber, blue, green] }] } });
+  new Chart(document.getElementById("catChart"), { type: "bar",
+    data: { labels: d.cats.labels, datasets: [{ label: "Reports", data: d.cats.values, backgroundColor: blue }] },
+    options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } } });
+</script>
+{% endblock %}

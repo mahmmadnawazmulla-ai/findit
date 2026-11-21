@@ -1,0 +1,20 @@
+{% extends "manage/base.html" %}
+{% block title %}Categories - FindIt admin{% endblock %}
+{% block manage %}
+<h1 class="h3 mb-3">Item categories</h1>
+<div class="row g-4">
+  <div class="col-md-5"><form class="panel" method="post" novalidate>
+    <h2>Add a category</h2>
+    {% include "portal/_form.html" %}
+    <button class="btn btn-primary" type="submit">Add category</button>
+  </form></div>
+  <div class="col-md-7"><div class="panel">
+    {% for c in cats %}
+      <form class="d-flex justify-content-between align-items-center border-bottom py-2" method="post">{% csrf_token %}
+        <span>{{ c.name }} <span class="text-muted small">({{ c.n }} report{{ c.n|pluralize }})</span></span>
+        <button class="btn btn-sm btn-outline-danger" name="delete" value="{{ c.pk }}">Delete</button>
+      </form>
+    {% endfor %}
+  </div></div>
+</div>
+{% endblock %}

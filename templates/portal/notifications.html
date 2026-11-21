@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Notifications - FindIt{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Notifications</h1>
+<div class="panel">
+  {% for n in notes %}
+    <div class="border-bottom py-3 d-flex justify-content-between gap-3">
+      <div>{% if n.link %}<a class="text-decoration-none" href="{{ n.link }}">{{ n.message }}</a>{% else %}{{ n.message }}{% endif %}</div>
+      <small class="text-muted text-nowrap">{{ n.created_at|timesince }} ago</small>
+    </div>
+  {% empty %}<p class="text-muted mb-0">You are all caught up.</p>{% endfor %}
+</div>
+{% endblock %}

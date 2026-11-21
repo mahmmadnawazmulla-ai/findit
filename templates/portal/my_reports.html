@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}My reports - FindIt{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">My reports</h1>
+<h2 class="h5 mt-4">Lost items</h2>
+<div class="row g-3">
+  {% for item in lost %}<div class="col-sm-6 col-lg-3">{% include "portal/_item_card.html" %}
+    {% if item.approval != 'approved' %}<span class="badge text-bg-warning mt-1">{{ item.get_approval_display }}</span>{% endif %}</div>
+  {% empty %}<p class="text-muted">You have not reported anything lost. <a href="{% url 'report_lost' %}">Report a lost item</a></p>{% endfor %}
+</div>
+<h2 class="h5 mt-5">Found items</h2>
+<div class="row g-3">
+  {% for item in found %}<div class="col-sm-6 col-lg-3">{% include "portal/_item_card.html" %}
+    {% if item.approval != 'approved' %}<span class="badge text-bg-warning mt-1">{{ item.get_approval_display }}</span>{% endif %}</div>
+  {% empty %}<p class="text-muted">You have not reported anything found. <a href="{% url 'report_found' %}">Report a found item</a></p>{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+:root {
+  --fi-primary: #2563EB;
+  --fi-primary-dark: #1D4ED8;
+  --fi-navy: #0F172A;
+  --fi-bg: #F8FAFC;
+  --fi-success: #16A34A;
+  --fi-warning: #F59E0B;
+  --fi-border: #E2E8F0;
+  --fi-muted: #64748B;
+  --bs-primary: #2563EB;
+  --bs-primary-rgb: 37, 99, 235;
+  --bs-link-color: #2563EB;
+  --bs-link-hover-color: #1D4ED8;
+  --bs-body-font-family: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+body { background: var(--fi-bg); color: var(--fi-navy); font-feature-settings: "tnum"; }
+h1, h2, h3, h4, h5 { font-weight: 800; letter-spacing: -0.02em; }
+.btn-primary {
+  --bs-btn-bg: var(--fi-primary); --bs-btn-border-color: var(--fi-primary);
+  --bs-btn-hover-bg: var(--fi-primary-dark); --bs-btn-hover-border-color: var(--fi-primary-dark);
+  --bs-btn-active-bg: var(--fi-primary-dark); --bs-btn-active-border-color: var(--fi-primary-dark);
+  --bs-btn-disabled-bg: var(--fi-primary); --bs-btn-disabled-border-color: var(--fi-primary);
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--fi-primary); --bs-btn-border-color: var(--fi-primary);
+  --bs-btn-hover-bg: var(--fi-primary); --bs-btn-hover-border-color: var(--fi-primary);
+  --bs-btn-active-bg: var(--fi-primary); --bs-btn-active-border-color: var(--fi-primary);
+}
+.btn, .form-control, .form-select { border-radius: 10px; }
+.btn { font-weight: 600; }
+:focus-visible { outline: 3px solid rgba(37, 99, 235, .45); outline-offset: 2px; }
+
+/* Navigation */
+.fi-nav { background: var(--fi-navy); }
+.fi-nav .navbar-brand { font-weight: 800; letter-spacing: -0.03em; font-size: 1.35rem; }
+.fi-nav .navbar-brand .dot { color: #60A5FA; }
+.fi-nav .nav-link { color: #CBD5E1; font-weight: 600; }
+.fi-nav .nav-link:hover, .fi-nav .nav-link.active { color: #fff; }
+.badge-count { background: var(--fi-warning); color: var(--fi-navy); font-size: .7rem; vertical-align: top; }
+
+/* Hero: the search is the point of the page */
+.hero { background: var(--fi-navy); color: #fff; padding: 4.5rem 0 5.5rem; }
+.hero h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: 1.05; max-width: 15ch; }
+.hero p.lead { color: #94A3B8; max-width: 46ch; }
+.hero-search { background: #fff; border-radius: 16px; padding: .6rem; display: flex; gap: .5rem; flex-wrap: wrap; max-width: 760px; }
+.hero-search .form-control, .hero-search .form-select { border: 0; box-shadow: none; background: transparent; color: var(--fi-navy); }
+.hero-search .form-control { flex: 2 1 220px; }
+.hero-search .form-select { flex: 1 1 160px; border-left: 1px solid var(--fi-border); border-radius: 0; }
+.stat-strip { margin-top: -2.2rem; }
+.stat-strip .stat { background: #fff; border: 1px solid var(--fi-border); border-radius: 14px; padding: 1rem 1.25rem; }
+.stat .num { font-size: 1.9rem; font-weight: 800; line-height: 1; }
+.stat .lbl { color: var(--fi-muted); font-size: .85rem; }
+
+/* Item cards: left edge colour tells lost from found */
+.item-card { background: #fff; border: 1px solid var(--fi-border); border-radius: 14px; overflow: hidden; height: 100%;
+  display: flex; flex-direction: column; border-left-width: 5px; transition: box-shadow .15s ease; }
+.item-card:hover { box-shadow: 0 8px 24px rgba(15, 23, 42, .08); }
+.item-card.kind-lost { border-left-color: var(--fi-warning); }
+.item-card.kind-found { border-left-color: var(--fi-success); }
+.item-thumb { aspect-ratio: 16 / 10; background: #EEF2F7; display: grid; place-items: center; color: #94A3B8; font-size: 2.4rem; overflow: hidden; }
+.item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.item-card .body { padding: .9rem 1rem 1rem; display: flex; flex-direction: column; gap: .35rem; flex: 1; }
+.item-card h3 { font-size: 1.05rem; margin: 0; }
+.item-card .meta { color: var(--fi-muted); font-size: .85rem; }
+.kind-tag { font-size: .75rem; font-weight: 700; }
+.kind-tag.lost { color: #B45309; }
+.kind-tag.found { color: var(--fi-success); }
+.stretched-link::after { border-radius: 14px; }
+
+/* Panels */
+.panel { background: #fff; border: 1px solid var(--fi-border); border-radius: 14px; padding: 1.25rem 1.4rem; }
+.panel h2 { font-size: 1.1rem; }
+.table > :not(caption) > * > * { padding: .75rem .9rem; }
+.table thead th { color: var(--fi-muted); font-weight: 600; font-size: .85rem; border-bottom-color: var(--fi-border); }
+
+/* Journey: Lost -> Matched -> Claimed -> Recovered */
+.journey { display: flex; gap: 0; list-style: none; padding: 0; margin: 0; }
+.journey li { flex: 1; text-align: center; font-size: .8rem; color: var(--fi-muted); position: relative; padding-top: 1.5rem; }
+.journey li::before { content: ""; position: absolute; top: .35rem; left: 50%; width: 12px; height: 12px; border-radius: 50%; background: #CBD5E1; transform: translateX(-50%); z-index: 1; }
+.journey li::after { content: ""; position: absolute; top: .65rem; left: -50%; width: 100%; height: 2px; background: #CBD5E1; }
+.journey li:first-child::after { display: none; }
+.journey li.done { color: var(--fi-navy); font-weight: 700; }
+.journey li.done::before, .journey li.done::after { background: var(--fi-primary); }
+
+.match-score { font-weight: 800; color: var(--fi-success); }
+.auth-card { max-width: 460px; margin: 3rem auto; }
+.sidebar-link { display: block; padding: .55rem .8rem; border-radius: 10px; color: var(--fi-navy); text-decoration: none; font-weight: 600; }
+.sidebar-link:hover, .sidebar-link.active { background: #E8EFFE; color: var(--fi-primary); }
+.errorlist { color: #DC2626; list-style: none; padding: 0; margin: .25rem 0 0; font-size: .85rem; }
+.helptext, .form-text { color: var(--fi-muted); font-size: .82rem; }
+footer { color: var(--fi-muted); font-size: .85rem; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

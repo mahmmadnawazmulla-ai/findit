@@ -1,0 +1,37 @@
+{% extends "manage/base.html" %}
+{% block title %}Review claim - FindIt admin{% endblock %}
+{% block manage %}
+<h1 class="h3 mb-3">Review claim <span class="badge text-bg-{{ claim.status_badge }} fs-6">{{ claim.get_claim_status_display }}</span></h1>
+<div class="row g-4">
+  <div class="col-lg-6"><div class="panel h-100">
+    <h2>Found item</h2>
+    <p class="mb-1"><a href="{{ found.get_absolute_url }}">{{ found.item_name }}</a> ({{ found.category.name }}, {{ found.colour }})</p>
+    <p class="text-muted">{{ found.description }}</p>
+    <p class="mb-1"><strong>Verification question:</strong> {{ found.verification_question|default:"none set" }}</p>
+    <p class="mb-0"><strong>Correct answer:</strong> <span class="text-success">{{ found.verification_answer|default:"none set" }}</span></p>
+  </div></div>
+  <div class="col-lg-6"><div class="panel h-100">
+    <h2>Claimant: {{ claim.user.username }}</h2>
+    <p class="mb-1"><strong>Their answer:</strong> {{ claim.verification_response|default:"-" }}</p>
+    <p class="mb-1"><strong>Proof of ownership:</strong></p>
+    <p class="text-muted">{{ claim.claim_description|linebreaksbr }}</p>
+    {% if claim.lost_item %}<p class="mb-0"><strong>Linked lost report:</strong> <a href="{{ claim.lost_item.get_absolute_url }}">{{ claim.lost_item.item_name }}</a></p>{% endif %}
+  </div></div>
+  <div class="col-12"><div class="panel">
+    <h2>Decision</h2>
+    {% if claim.claim_status == 'pending' %}
+    <form method="post">{% csrf_token %}
+      <label class="form-label fw-semibold" for="note">Note to the claimant (optional)</label>
+      <input class="form-control mb-3" id="note" name="admin_note" maxlength="300">
+      <button class="btn btn-success" name="decision" value="approve">Approve claim</button>
+      <button class="btn btn-outline-danger" name="decision" value="reject">Reject claim</button>
+    </form>
+    {% elif claim.claim_status == 'approved' and found.status != 'recovered' %}
+    <p>Approved. Once the owner has the item back, mark it recovered.</p>
+    <form method="post">{% csrf_token %}<button class="btn btn-success" name="decision" value="recovered">Mark as recovered</button></form>
+    {% else %}
+    <p class="mb-0">{{ claim.admin_note|default:"No note." }}{% if found.status == 'recovered' %} This item is recovered.{% endif %}</p>
+    {% endif %}
+  </div></div>
+</div>
+{% endblock %}

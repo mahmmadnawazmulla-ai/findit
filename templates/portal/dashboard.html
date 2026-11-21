@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - FindIt{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Hello, {{ user.first_name|default:user.username }}</h1>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><a class="text-decoration-none" href="{% url 'my_reports' %}"><div class="stat panel"><div class="num">{{ counts.lost }}</div><div class="lbl">Items I lost</div></div></a></div>
+  <div class="col-6 col-lg-3"><a class="text-decoration-none" href="{% url 'my_reports' %}"><div class="stat panel"><div class="num">{{ counts.found }}</div><div class="lbl">Items I found</div></div></a></div>
+  <div class="col-6 col-lg-3"><a class="text-decoration-none" href="{% url 'my_claims' %}"><div class="stat panel"><div class="num">{{ counts.claims }}</div><div class="lbl">My claims</div></div></a></div>
+  <div class="col-6 col-lg-3"><div class="stat panel"><div class="num text-success">{{ counts.recovered }}</div><div class="lbl">Recovered</div></div></div>
+</div>
+<div class="d-flex gap-2 mb-4 flex-wrap">
+  <a class="btn btn-primary" href="{% url 'report_lost' %}">Report lost item</a>
+  <a class="btn btn-outline-primary" href="{% url 'report_found' %}">Report found item</a>
+</div>
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="panel h-100">
+      <h2>Possible matches</h2>
+      {% for m in matches %}
+        <div class="d-flex justify-content-between border-top py-2">
+          <div><a href="{{ m.lost_item.get_absolute_url }}">{{ m.lost_item.item_name }}</a> and <a href="{{ m.found_item.get_absolute_url }}">{{ m.found_item.item_name }}</a></div>
+          <span class="match-score">{{ m.score }}%</span>
+        </div>
+      {% empty %}<p class="text-muted mb-0">No matches yet. We check every new report against yours.</p>{% endfor %}
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="panel h-100">
+      <h2>Latest notifications</h2>
+      {% for n in notes %}
+        <div class="border-top py-2 {% if not n.is_read %}fw-semibold{% endif %}">{{ n.message }}<div class="small text-muted">{{ n.created_at|timesince }} ago</div></div>
+      {% empty %}<p class="text-muted mb-0">Nothing new.</p>{% endfor %}
+      <a class="d-block mt-2" href="{% url 'notifications' %}">All notifications</a>
+    </div>
+  </div>
+  {% if incoming %}
+  <div class="col-12">
+    <div class="panel">
+      <h2>Claims on items I found</h2>
+      {% for c in incoming %}
+        <div class="d-flex justify-content-between border-top py-2">
+          <a href="{{ c.found_item.get_absolute_url }}">{{ c.found_item.item_name }}</a>
+          <span class="badge text-bg-{{ c.status_badge }}">{{ c.get_claim_status_display }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

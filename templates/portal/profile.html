@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Profile - FindIt{% endblock %}
+{% block content %}
+<div class="panel mx-auto" style="max-width:560px">
+  <h1 class="h3 mb-3">Your profile</h1>
+  <form method="post" novalidate>
+    {% include "portal/_form.html" %}
+    <button class="btn btn-primary" type="submit">Save profile</button>
+  </form>
+</div>
+{% endblock %}

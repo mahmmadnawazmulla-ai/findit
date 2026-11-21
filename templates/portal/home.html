@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block hero %}
+<section class="hero">
+  <div class="container">
+    <h1>Lost it? Someone may have found it.</h1>
+    <p class="lead mt-3 mb-4">Search every found report in one place, or tell us what you lost and we will watch for a match.</p>
+    <form class="hero-search" action="{% url 'browse' %}" method="get">
+      <input type="hidden" name="type" value="found">
+      <input class="form-control" type="search" name="q" placeholder="Black wallet, ID card, keys..." aria-label="What did you lose?">
+      <select class="form-select" name="category" aria-label="Category">
+        <option value="">Any category</option>
+        {% for c in categories %}<option value="{{ c.pk }}">{{ c.name }}</option>{% endfor %}
+      </select>
+      <button class="btn btn-primary px-4" type="submit">Search found items</button>
+    </form>
+    <div class="mt-4 d-flex gap-2 flex-wrap">
+      <a class="btn btn-outline-light" href="{% url 'report_lost' %}">I lost something</a>
+      <a class="btn btn-outline-light" href="{% url 'report_found' %}">I found something</a>
+    </div>
+  </div>
+</section>
+<div class="container stat-strip">
+  <div class="row g-3">
+    <div class="col-4"><div class="stat"><div class="num">{{ stats.lost }}</div><div class="lbl">Lost reports</div></div></div>
+    <div class="col-4"><div class="stat"><div class="num">{{ stats.found }}</div><div class="lbl">Found reports</div></div></div>
+    <div class="col-4"><div class="stat"><div class="num text-success">{{ stats.recovered }}</div><div class="lbl">Recovered</div></div></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4 mt-1">
+  <section class="col-lg-6">
+    <div class="d-flex justify-content-between align-items-baseline mb-3">
+      <h2 class="h4 mb-0">Recently found</h2><a href="{% url 'browse' %}?type=found">See all</a>
+    </div>
+    <div class="row g-3">
+      {% for item in latest_found %}<div class="col-sm-6">{% include "portal/_item_card.html" %}</div>
+      {% empty %}<p class="text-muted">No found items yet. <a href="{% url 'report_found' %}">Report the first one</a>.</p>{% endfor %}
+    </div>
+  </section>
+  <section class="col-lg-6">
+    <div class="d-flex justify-content-between align-items-baseline mb-3">
+      <h2 class="h4 mb-0">Recently lost</h2><a href="{% url 'browse' %}?type=lost">See all</a>
+    </div>
+    <div class="row g-3">
+      {% for item in latest_lost %}<div class="col-sm-6">{% include "portal/_item_card.html" %}</div>
+      {% empty %}<p class="text-muted">No lost items yet. <a href="{% url 'report_lost' %}">Report one</a>.</p>{% endfor %}
+    </div>
+  </section>
+</div>
+
+<section class="panel mt-5">
+  <h2 class="h4 mb-3">How an item makes it home</h2>
+  <ol class="journey mb-3">
+    <li class="done">Reported</li><li class="done">Matched</li><li class="done">Claimed</li><li class="done">Recovered</li>
+  </ol>
+  <p class="mb-0 text-muted">FindIt compares name, category, colour, place and date between lost and found reports and suggests matches.
+    Owners then prove it is theirs by answering the finder's question, and an admin verifies the claim before contact details are shared.</p>
+</section>
+{% endblock %}

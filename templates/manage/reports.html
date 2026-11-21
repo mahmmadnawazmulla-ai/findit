@@ -1,0 +1,42 @@
+{% extends "manage/base.html" %}
+{% block title %}Reports - FindIt admin{% endblock %}
+{% block manage %}
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+  <h1 class="h3 mb-0">Reports</h1>
+  <form class="d-flex gap-2" method="get">
+    <select class="form-select" name="type" aria-label="Type">
+      <option value="all">Lost and found</option>
+      <option value="lost" {% if kind == 'lost' %}selected{% endif %}>Lost</option>
+      <option value="found" {% if kind == 'found' %}selected{% endif %}>Found</option>
+    </select>
+    <select class="form-select" name="approval" aria-label="Approval">
+      <option value="">Any approval</option>
+      <option value="pending" {% if approval == 'pending' %}selected{% endif %}>Pending</option>
+      <option value="approved" {% if approval == 'approved' %}selected{% endif %}>Approved</option>
+      <option value="rejected" {% if approval == 'rejected' %}selected{% endif %}>Rejected</option>
+    </select>
+    <button class="btn btn-primary">Filter</button>
+  </form>
+</div>
+<div class="panel p-0 table-responsive">
+  <table class="table align-middle mb-0">
+    <thead><tr><th>Item</th><th>Type</th><th>Reporter</th><th>Approval</th><th>Status</th><th class="text-end">Actions</th></tr></thead>
+    <tbody>
+    {% for i in items %}
+      <tr>
+        <td><a href="{{ i.get_absolute_url }}">{{ i.item_name }}</a><div class="small text-muted">{{ i.location }}</div></td>
+        <td><span class="kind-tag {{ i.kind }}">{{ i.kind|title }}</span></td>
+        <td>{{ i.user.username }}</td>
+        <td><span class="badge text-bg-{% if i.approval == 'approved' %}success{% elif i.approval == 'rejected' %}danger{% else %}warning{% endif %}">{{ i.get_approval_display }}</span></td>
+        <td>{{ i.get_status_display }}</td>
+        <td class="text-end text-nowrap">
+          {% if i.approval != 'approved' %}<form class="d-inline" method="post" action="{% url 'manage_report_action' i.kind i.pk 'approve' %}">{% csrf_token %}<button class="btn btn-sm btn-success">Approve</button></form>{% endif %}
+          {% if i.approval != 'rejected' %}<form class="d-inline" method="post" action="{% url 'manage_report_action' i.kind i.pk 'reject' %}">{% csrf_token %}<button class="btn btn-sm btn-outline-secondary">Reject</button></form>{% endif %}
+          <form class="d-inline" method="post" action="{% url 'manage_report_action' i.kind i.pk 'remove' %}" onsubmit="return confirm('Remove this report permanently?');">{% csrf_token %}<button class="btn btn-sm btn-outline-danger">Remove</button></form>
+        </td>
+      </tr>
+    {% empty %}<tr><td colspan="6" class="text-muted text-center py-4">No reports match this filter.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

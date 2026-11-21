@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}My claims - FindIt{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">My claims</h1>
+<div class="panel">
+  {% if claims %}
+  <div class="table-responsive"><table class="table align-middle mb-0">
+    <thead><tr><th>Item</th><th>Submitted</th><th>Status</th><th>Admin note</th></tr></thead>
+    <tbody>{% for c in claims %}
+      <tr><td><a href="{{ c.found_item.get_absolute_url }}">{{ c.found_item.item_name }}</a></td>
+        <td>{{ c.created_at|date:"d M Y" }}</td>
+        <td><span class="badge text-bg-{{ c.status_badge }}">{{ c.get_claim_status_display }}</span></td>
+        <td>{{ c.admin_note|default:"-" }}</td></tr>
+    {% endfor %}</tbody></table></div>
+  {% else %}<p class="text-muted mb-0">No claims yet. Open a found item that looks like yours and choose Claim this item.</p>{% endif %}
+</div>
+{% endblock %}

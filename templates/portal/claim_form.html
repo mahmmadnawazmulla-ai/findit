@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Claim {{ item.item_name }} - FindIt{% endblock %}
+{% block content %}
+<div class="panel mx-auto" style="max-width:640px">
+  <h1 class="h3">Claim: {{ item.item_name }}</h1>
+  <p class="text-muted">Found at {{ item.location }} on {{ item.date|date:"d M Y" }}. Describe details that only the owner would know.</p>
+  <form method="post" novalidate>
+    {% include "portal/_form.html" %}
+    <button class="btn btn-primary" type="submit">Submit claim</button>
+    <a class="btn btn-link" href="{{ item.get_absolute_url }}">Back to item</a>
+  </form>
+</div>
+{% endblock %}

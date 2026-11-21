@@ -1,0 +1,15 @@
+<article class="item-card kind-{{ item.kind }} position-relative">
+  <div class="item-thumb">
+    {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.item_name }}" loading="lazy">
+    {% else %}<i class="bi {% if item.kind == 'lost' %}bi-search{% else %}bi-box-seam{% endif %}" aria-hidden="true"></i>{% endif %}
+  </div>
+  <div class="body">
+    <div class="d-flex justify-content-between align-items-center">
+      <span class="kind-tag {{ item.kind }}">{% if item.kind == 'lost' %}Lost{% else %}Found{% endif %}</span>
+      <span class="badge text-bg-{{ item.status_badge }}">{{ item.get_status_display }}</span>
+    </div>
+    <h3><a class="stretched-link text-decoration-none text-reset" href="{{ item.get_absolute_url }}">{{ item.item_name }}</a></h3>
+    <div class="meta"><i class="bi bi-geo-alt"></i> {{ item.location }}</div>
+    <div class="meta">{{ item.category.name }}, {{ item.colour }} - {{ item.date|date:"d M Y" }}</div>
+  </div>
+</article>

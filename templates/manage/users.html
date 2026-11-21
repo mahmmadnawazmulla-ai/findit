@@ -1,0 +1,15 @@
+{% extends "manage/base.html" %}
+{% block title %}Users - FindIt admin{% endblock %}
+{% block manage %}
+<h1 class="h3 mb-3">Registered users</h1>
+<div class="panel p-0 table-responsive">
+  <table class="table align-middle mb-0">
+    <thead><tr><th>Username</th><th>Email</th><th>Phone</th><th>Joined</th><th>Lost</th><th>Found</th><th>Role</th></tr></thead>
+    <tbody>{% for u in users %}
+      <tr><td>{{ u.username }}</td><td>{{ u.email|default:"-" }}</td><td>{{ u.profile.phone_number|default:"-" }}</td>
+        <td>{{ u.date_joined|date:"d M Y" }}</td><td>{{ u.lost_n }}</td><td>{{ u.found_n }}</td>
+        <td>{% if u.is_staff %}<span class="badge text-bg-primary">Admin</span>{% else %}User{% endif %}</td></tr>
+    {% endfor %}</tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load findit_tags %}
+{% block title %}{{ item.item_name }} - FindIt{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="panel">
+      {% if item.approval != 'approved' %}<div class="alert alert-warning">This report is <strong>{{ item.get_approval_display|lower }}</strong> and is only visible to you and the admins.</div>{% endif %}
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div><span class="kind-tag {{ kind }}">{% if kind == 'lost' %}Lost item{% else %}Found item{% endif %}</span>
+          <h1 class="h2 mb-0">{{ item.item_name }}</h1></div>
+        <span class="badge text-bg-{{ item.status_badge }}">{{ item.get_status_display }}</span>
+      </div>
+      {% if item.image %}<img class="img-fluid rounded-3 my-3" src="{{ item.image.url }}" alt="{{ item.item_name }}">{% endif %}
+      <dl class="row mt-3 mb-0">
+        <dt class="col-sm-4">Category</dt><dd class="col-sm-8">{{ item.category.name }}</dd>
+        <dt class="col-sm-4">Colour</dt><dd class="col-sm-8">{{ item.colour }}</dd>
+        <dt class="col-sm-4">{% if kind == 'lost' %}Lost at{% else %}Found at{% endif %}</dt><dd class="col-sm-8">{{ item.location }}</dd>
+        <dt class="col-sm-4">Date</dt><dd class="col-sm-8">{{ item.date|date:"d F Y" }}</dd>
+        <dt class="col-sm-4">Description</dt><dd class="col-sm-8">{{ item.description|linebreaksbr }}</dd>
+        <dt class="col-sm-4">Reported by</dt>
+        <dd class="col-sm-8">{% if item.hide_contact and not is_owner %}Anonymous{% else %}{{ item.user.username }}{% endif %}, {{ item.created_at|timesince }} ago</dd>
+      </dl>
+      {% if show_contact %}
+        <div class="alert alert-info mt-3 mb-0">
+          <strong>Contact:</strong> {{ item.user.email|default:"no email" }}{% if item.user.profile.phone_number %}, {{ item.user.profile.phone_number }}{% endif %}
+        </div>
+      {% elif item.hide_contact %}
+        <div class="alert alert-secondary mt-3 mb-0">The reporter keeps contact details private. Updates reach them through FindIt.</div>
+      {% endif %}
+    </div>
+
+    <div class="panel mt-4"><h2>Recovery status</h2>{% journey item %}</div>
+  </div>
+
+  <div class="col-lg-5">
+    {% if kind == 'found' %}
+    <div class="panel mb-4">
+      <h2>Is this yours?</h2>
+      {% if can_claim %}
+        <p class="text-muted">Submit a claim with proof of ownership. An admin verifies it before any contact details are shared.</p>
+        <a class="btn btn-primary w-100" href="{% url 'claim_create' item.pk %}">Claim this item</a>
+      {% elif my_claim %}
+        <p class="mb-2">Your claim is <span class="badge text-bg-{{ my_claim.status_badge }}">{{ my_claim.get_claim_status_display }}</span></p>
+        <a href="{% url 'my_claims' %}">View my claims</a>
+      {% elif is_owner %}
+        <p class="text-muted mb-0">You reported this item. Claims are reviewed by an admin.</p>
+      {% elif not user.is_authenticated %}
+        <a class="btn btn-primary w-100" href="{% url 'login' %}?next={{ request.path }}">Log in to claim</a>
+      {% else %}
+        <p class="text-muted mb-0">This item has already been claimed.</p>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {% if matches %}
+    <div class="panel mb-4">
+      <h2>Possible matches</h2>
+      {% for m in matches %}
+        {% if kind == 'lost' %}{% with other=m.found_item %}
+          <div class="d-flex justify-content-between border-top py-2"><a href="{{ other.get_absolute_url }}">{{ other.item_name }}</a><span class="match-score">{{ m.score }}%</span></div>
+        {% endwith %}{% else %}{% with other=m.lost_item %}
+          <div class="d-flex justify-content-between border-top py-2"><a href="{{ other.get_absolute_url }}">{{ other.item_name }}</a><span class="match-score">{{ m.score }}%</span></div>
+        {% endwith %}{% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="panel mb-4 text-center">
+      <h2>QR code</h2>
+      <img src="{% url 'qr_code' kind item.pk %}" alt="QR code for this report" width="150" height="150">
+      <p class="small text-muted mt-2 mb-0">Scan to open this report. Print it for notice boards.</p>
+    </div>
+
+    {% if is_owner or user.is_staff %}
+    <div class="panel">
+      <h2>Manage</h2>
+      {% if item.status != 'recovered' %}
+        <form method="post" action="{% url 'mark_recovered' kind item.pk %}" class="mb-2">{% csrf_token %}
+          <button class="btn btn-success w-100" type="submit">Mark as recovered</button></form>
+      {% endif %}
+      <form method="post" action="{% url 'delete_item' kind item.pk %}" onsubmit="return confirm('Delete this report?');">{% csrf_token %}
+        <button class="btn btn-outline-danger w-100" type="submit">Delete report</button></form>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Browse items - FindIt{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <aside class="col-lg-3">
+    <form class="panel" method="get">
+      <h2>Filter</h2>
+      <div class="mb-2"><label class="form-label small fw-semibold" for="q">Name or keyword</label>
+        <input class="form-control" id="q" name="q" value="{{ f.q }}"></div>
+      <div class="mb-2"><label class="form-label small fw-semibold" for="type">Show</label>
+        <select class="form-select" id="type" name="type">
+          <option value="all">Lost and found</option>
+          <option value="lost" {% if f.type == 'lost' %}selected{% endif %}>Lost only</option>
+          <option value="found" {% if f.type == 'found' %}selected{% endif %}>Found only</option>
+        </select></div>
+      <div class="mb-2"><label class="form-label small fw-semibold" for="category">Category</label>
+        <select class="form-select" id="category" name="category">
+          <option value="">Any</option>
+          {% for c in categories %}<option value="{{ c.pk }}" {% if f.category == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+        </select></div>
+      <div class="mb-2"><label class="form-label small fw-semibold" for="colour">Colour</label>
+        <input class="form-control" id="colour" name="colour" value="{{ f.colour }}"></div>
+      <div class="mb-2"><label class="form-label small fw-semibold" for="location">Location</label>
+        <input class="form-control" id="location" name="location" value="{{ f.location }}" placeholder="e.g. library"></div>
+      <div class="row g-2 mb-2">
+        <div class="col-6"><label class="form-label small fw-semibold" for="from">From</label><input class="form-control" type="date" id="from" name="from" value="{{ f.from }}"></div>
+        <div class="col-6"><label class="form-label small fw-semibold" for="to">To</label><input class="form-control" type="date" id="to" name="to" value="{{ f.to }}"></div>
+      </div>
+      <div class="mb-3"><label class="form-label small fw-semibold" for="status">Status</label>
+        <select class="form-select" id="status" name="status">
+          <option value="">Any</option>
+          {% for k, v in status_choices %}<option value="{{ k }}" {% if f.status == k %}selected{% endif %}>{{ v }}</option>{% endfor %}
+        </select></div>
+      <button class="btn btn-primary w-100" type="submit">Apply filters</button>
+      <a class="btn btn-link w-100" href="{% url 'browse' %}">Clear</a>
+    </form>
+  </aside>
+  <section class="col-lg-9">
+    <p class="text-muted">{{ total }} item{{ total|pluralize }}</p>
+    <div class="row g-3">
+      {% for item in page %}<div class="col-sm-6 col-xl-4">{% include "portal/_item_card.html" %}</div>
+      {% empty %}
+        <div class="panel text-center py-5"><h2 class="h5">Nothing matches these filters</h2>
+          <p class="text-muted">Try a broader keyword or clear the filters, or report it yourself.</p>
+          <a class="btn btn-primary" href="{% url 'report_lost' %}">Report a lost item</a></div>
+      {% endfor %}
+    </div>
+    {% if page.paginator.num_pages > 1 %}
+    <nav class="mt-4" aria-label="Pages"><ul class="pagination">
+      {% if page.has_previous %}<li class="page-item"><a class="page-link" href="?{{ querystring }}&page={{ page.previous_page_number }}">Previous</a></li>{% endif %}
+      <li class="page-item disabled"><span class="page-link">Page {{ page.number }} of {{ page.paginator.num_pages }}</span></li>
+      {% if page.has_next %}<li class="page-item"><a class="page-link" href="?{{ querystring }}&page={{ page.next_page_number }}">Next</a></li>{% endif %}
+    </ul></nav>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

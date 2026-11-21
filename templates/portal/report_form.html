@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Report {{ kind }} item - FindIt{% endblock %}
+{% block content %}
+<div class="panel mx-auto" style="max-width:680px">
+  <h1 class="h3">{% if kind == 'lost' %}Report a lost item{% else %}Report a found item{% endif %}</h1>
+  <p class="text-muted">{% if kind == 'lost' %}The more detail you give, the better the matches.{% else %}Add a question only the owner can answer. It protects the item from false claims.{% endif %}</p>
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% include "portal/_form.html" %}
+    <button class="btn btn-primary" type="submit">Submit report</button>
+    <a class="btn btn-link" href="{% url 'home' %}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

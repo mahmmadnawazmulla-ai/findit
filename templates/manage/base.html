@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load findit_tags %}
+{% block content %}
+<div class="row g-4">
+  <aside class="col-lg-2">
+    <nav class="panel p-2">
+      <a class="sidebar-link {% active 'manage_dashboard' %}" href="{% url 'manage_dashboard' %}"><i class="bi bi-speedometer2"></i> Overview</a>
+      <a class="sidebar-link {% active 'manage_reports' %}" href="{% url 'manage_reports' %}"><i class="bi bi-card-checklist"></i> Reports</a>
+      <a class="sidebar-link {% active 'manage_claims' 'manage_claim_detail' %}" href="{% url 'manage_claims' %}"><i class="bi bi-shield-check"></i> Claims</a>
+      <a class="sidebar-link {% active 'manage_users' %}" href="{% url 'manage_users' %}"><i class="bi bi-people"></i> Users</a>
+      <a class="sidebar-link {% active 'manage_categories' %}" href="{% url 'manage_categories' %}"><i class="bi bi-tags"></i> Categories</a>
+      <a class="sidebar-link {% active 'manage_recovered' %}" href="{% url 'manage_recovered' %}"><i class="bi bi-check2-circle"></i> Recovered</a>
+      <a class="sidebar-link" href="{% url 'admin:index' %}"><i class="bi bi-gear"></i> Django admin</a>
+    </nav>
+  </aside>
+  <section class="col-lg-10">{% block manage %}{% endblock %}</section>
+</div>
+{% endblock %}
